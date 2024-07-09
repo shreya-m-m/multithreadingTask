@@ -25,8 +25,8 @@ public class MultiThreadsProcessorV2 {
 
 	public static void main(String[] args) {
 		
-		 // Get the configuration file path
-        String configFilePath ="C:/Users/nichiuser/git/repository2/MulthithreadingTask/configureFile.txt";
+		 // Getting the configuration file path
+        String configFilePath ="configureFile.txt";
 
         // Read and parse configuration settings
         ConfigSettings configSettings = readConfigSettings(configFilePath);
@@ -35,7 +35,8 @@ public class MultiThreadsProcessorV2 {
             System.out.println("Error reading configuration settings.");
             return;
         }
-
+        
+        //Get User input for the word to Count the occurrences
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the word to be checked ");
 		String keyword = scanner.next();
@@ -45,7 +46,11 @@ public class MultiThreadsProcessorV2 {
 		String outputFile = configSettings.getOutputPath();
 		int batchSize = configSettings.getBatchSize();
 		
+		//IniTialize a Concurrent Map to Store results
 		ConcurrentHashMap<String, FolderProcessor> results = new ConcurrentHashMap<>();
+	
+		// Getting all the files inside the main directory
+		
 		File path = new File(foldersPath);
 		File[] folders= path.listFiles(File::isDirectory);
 		
@@ -103,6 +108,7 @@ public class MultiThreadsProcessorV2 {
 				System.out.println("------------------------------");
 			});
 			
+			//Write Result into CSV File
 			writeResultToCsv(results, keyword, outputFile);
 		} else {
 			System.out.println("File not found outputFile");
@@ -111,7 +117,7 @@ public class MultiThreadsProcessorV2 {
 	}
 	
 	private static ConfigSettings readConfigSettings(String configFilePath) {
-		// TODO Auto-generated method stub
+		
 		Properties properties = new Properties();
 		  try (FileInputStream input = new FileInputStream(configFilePath)) {
 	            properties.load(input);
@@ -130,6 +136,7 @@ public class MultiThreadsProcessorV2 {
 		 for(File folder: folders) {
 			 System.out.println(Thread.currentThread().getName() + " now processing the folder: " + folder.getName());
 			 
+			 //Getting all text files in the the folder
 			   File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
 			   
 			   if (files != null) {
@@ -139,7 +146,7 @@ public class MultiThreadsProcessorV2 {
 					   folderResult.addProcessedFileResult(new FileProcesserResult(file.getName(), fileWordCount));
 							   
 				   }
-				   
+				   //Store the result in the Concurrent map
 				   results.put(folder.getName(),folderResult);
 			   }else {
 				   System.out.println("No Text file found in the folder " + folder.getName());
@@ -153,6 +160,7 @@ public class MultiThreadsProcessorV2 {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = reader.readLine()) != null) {
+				//Split line into words and count occurrences of the specified word
 				String[] words = line.trim().toLowerCase().split("\\s+");
 				for(String w : words) {
 					if(w.equals(keyword)) {
