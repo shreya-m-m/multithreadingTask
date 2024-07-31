@@ -176,21 +176,19 @@ public class MultiThreadsProcessorV2 {
 		return count;
 	}
 
-	private static void writeResultToCsv(ConcurrentHashMap<String, FolderProcessor> results, String keyword,
-			String outputFile) {
-		try {
-			PrintWriter writer = new PrintWriter( new FileWriter(outputFile));
-			writer.println("Folder,Keyword,File,WordCount");
-			
-			for(FolderProcessor folderResult : results.values()) {
-				String folderName = folderResult.getFolderName();
-				
-				for(FileProcesserResult fileResult : folderResult.getFileresults()) {
-					String fileName = fileResult.getFileName();
-					int wordCount = fileResult.getWordCount();
-					writer.printf("%s,%s,%s,%d\n", folderName, keyword, fileName, wordCount);
-				}
-			}
+	private static void writeResultToCsv(ConcurrentHashMap<String, FolderProcessor> results, String keyword,String outputFile) {
+		  try (PrintWriter writer = new PrintWriter(new FileWriter(outputFile))) {
+	            writer.println("Folder,Keyword,File,Count");
+
+	            for (FolderProcessor folderResult : results.values()) {
+	                String folderName = folderResult.getFolderName();
+
+	                for (FileProcesserResult fileResult : folderResult.getFileresults()) {
+	                    String fileName = fileResult.getFileName();
+	                    int wordCount = fileResult.getWordCount();
+	                    writer.printf("%s,%s,%s,%d\n", folderName, keyword, fileName, wordCount);
+	                }
+	            }
 			System.out.println(" Result saved into CSV file: " + outputFile);
 		} catch (IOException e) {
 			System.out.println("Error while saving result into CSV: " + outputFile);

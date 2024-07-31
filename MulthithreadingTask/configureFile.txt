@@ -1,3 +1,3 @@
 batchSize=4
 folderPath=C:/Users/nichiuser/Desktop/threads
-outputPath=C:/Users/nichiuser/Desktop/threadsresultv2.csv
+outputPath=C:/Users/nichiuser/Desktop/threadsresultv03.csv
